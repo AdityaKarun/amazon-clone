@@ -2,7 +2,6 @@ import { products } from '../data/products.js';
 import { cart, addToCart } from '../data/cart.js';
 
 let productsHTML = '';
-let timeoutId;
 
 function updateCartQuantity() {
 

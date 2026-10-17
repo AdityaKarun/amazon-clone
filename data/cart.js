@@ -1,4 +1,5 @@
-export const cart = [];
+// Retrieve cart items from localStorage or initiate an empty array
+export const cart = JSON.parse(localStorage.getItem('cart')) || [];
 let timeoutId;
 
 export function addToCart(productId, quantity) {
@@ -20,6 +21,9 @@ export function addToCart(productId, quantity) {
         quantity: quantity
       });
     }
+
+    // Save the cart items to localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
 
     console.log('Added to Cart');
 
