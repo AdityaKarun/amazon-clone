@@ -1,5 +1,5 @@
 // Retrieve cart items from localStorage or initiate an empty array
-export const cart = JSON.parse(localStorage.getItem('cart')) || [];
+export let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let timeoutId;
 
 export function getCartQuantity() {
@@ -19,7 +19,7 @@ export function addToCart(productId, quantity) {
       if (productId == item.productId) {
         matchingItem = item;
       }
-    })
+    });
 
     // If item already exists in the cart, update its quantity, else add it to the cart
     if (matchingItem) {
@@ -47,4 +47,19 @@ export function addToCart(productId, quantity) {
     timeoutId = setTimeout(() => {
       addedToCartMessageElement.classList.remove('added-to-cart-visible');
     }, 2000);
+}
+
+export function removeFromCart(productId) {
+  const newCart = [];
+
+  cart.forEach((item) => {
+    if (item.productId !== productId) {
+      newCart.push(item);
+    }
+  });
+
+  cart = newCart;
+  
+  // Save the updated cart to localStorage
+  localStorage.setItem('cart', JSON.stringify(cart));
 }
