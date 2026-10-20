@@ -1,5 +1,5 @@
 import { products } from "../data/products.js";
-import { cart, getCartQuantity, removeFromCart } from "../data/cart.js";
+import { cart, getCartQuantity, removeFromCart, updateQuantity } from "../data/cart.js";
 import { formatCurrency } from './utils/money.js';
 
 let checkoutItemsHTML = '';
@@ -7,6 +7,12 @@ let checkoutItemsHTML = '';
 function deleteCartItemFromPage(productId) {
     const container = document.querySelector(`.js-cart-item-container-${productId}`);
     container.remove();
+    document.querySelector('.js-cart-quantity').innerHTML = `${getCartQuantity()} items`;
+}
+
+function updateCartItemOnPage(productId, newQuantity) {
+    const quantityLabel = document.querySelector(`.js-quantity-label-${productId}`);
+    quantityLabel.innerHTML = newQuantity;
     document.querySelector('.js-cart-quantity').innerHTML = `${getCartQuantity()} items`;
 }
 
@@ -34,8 +40,10 @@ cart.forEach((cartItem) => {
                     <div class="product-name">${matchingProduct.name}</div>
                     <div class="product-price">$${formatCurrency(matchingProduct.priceCents)}</div>
                     <div class="product-quantity">
-                        <span> Quantity: <span class="quantity-label">${cartItem.quantity}</span> </span>
-                        <span class="update-quantity-link link-primary"> Update </span>
+                        <span> Quantity: <span class="quantity-label js-quantity-label-${matchingProduct.id}">${cartItem.quantity}</span> </span>
+                        <span class="update-quantity-link link-primary js-update-link" data-product-id="${matchingProduct.id}"> Update </span>
+                        <input class="quantity-input js-quantity-input-${matchingProduct.id}">
+                        <span class="save-quantity-link link-primary js-save-link" data-product-id="${matchingProduct.id}">Save</span>
                         <span class="delete-quantity-link link-primary js-delete-link" data-product-id="${matchingProduct.id}"> Delete </span>
                     </div>
                 </div>
@@ -76,5 +84,40 @@ document.querySelectorAll('.js-delete-link').forEach((link) => {
         const productId = link.dataset.productId;
         removeFromCart(productId);
         deleteCartItemFromPage(productId);
+    })
+})
+
+document.querySelectorAll('.js-update-link').forEach((link) => {
+    link.addEventListener('click', () => {
+        const productId = link.dataset.productId;
+        
+        // Identify product container from productId, add a class to it to show an input box
+        const container = document.querySelector(`.js-cart-item-container-${productId}`);
+        container.classList.add('is-editing-quantity');
+    })
+})
+
+document.querySelectorAll('.js-save-link').forEach((link) => {
+    link.addEventListener('click', () => {
+        const productId = link.dataset.productId;
+        
+        // Find the product container
+        const container = document.querySelector(`.js-cart-item-container-${productId}`);
+
+        // Read the new quantity from the input box and convert it to a number
+        const quantityInput = container.querySelector(`.js-quantity-input-${productId}`);
+        const newQuantity = Number(quantityInput.value);
+
+        // Validate the quantity before saving the changes
+        if (!Number.isInteger(newQuantity) || newQuantity < 1 || newQuantity > 10) {
+            alert('Quantity must be a whole number between 1 and 10.');
+            return;
+        }
+
+        // Hide the input and Save button
+        container.classList.remove('is-editing-quantity');
+
+        updateQuantity(productId, newQuantity);
+        updateCartItemOnPage(productId, newQuantity)
     })
 })
