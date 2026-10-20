@@ -1,5 +1,5 @@
 import { products } from '../data/products.js';
-import { cart, addToCart } from '../data/cart.js';
+import { cart, addToCart, getCartQuantity } from '../data/cart.js';
 import { formatCurrency } from './utils/money.js';
 
 let productsHTML = '';
@@ -14,6 +14,9 @@ function updateCartQuantity() {
 
   document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
 }
+
+// Get cart quantity when page loads up
+document.querySelector('.js-cart-quantity').innerHTML = getCartQuantity();
 
 products.forEach((product) => {
   productsHTML += `

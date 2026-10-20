@@ -2,6 +2,15 @@
 export const cart = JSON.parse(localStorage.getItem('cart')) || [];
 let timeoutId;
 
+export function getCartQuantity() {
+  let noOfItems = 0;
+  cart.forEach((item) => {
+    noOfItems += item.quantity;
+  });
+
+  return noOfItems;
+}
+
 export function addToCart(productId, quantity) {
     let matchingItem;
 
