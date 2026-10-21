@@ -12,41 +12,42 @@ export function getCartQuantity() {
 }
 
 export function addToCart(productId, quantity) {
-    let matchingItem;
+  let matchingItem;
 
-    // Check if the item already exists in the cart
-    cart.forEach((item) => {
-      if (productId == item.productId) {
-        matchingItem = item;
-      }
-    });
-
-    // If item already exists in the cart, update its quantity, else add it to the cart
-    if (matchingItem) {
-      matchingItem.quantity += quantity;
-    } else {
-      cart.push({
-        productId: productId,
-        quantity: quantity
-      });
+  // Loop through the cart to find the item
+  cart.forEach((item) => {
+    if (productId == item.productId) {
+      matchingItem = item;
     }
+  });
 
-    // Save the cart items to localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
+  // If item already exists in the cart, update its quantity, else add it to the cart
+  if (matchingItem) {
+    matchingItem.quantity += quantity;
+  } else {
+    cart.push({
+      productId: productId,
+      quantity: quantity,
+      deliveryOptionId: '1'
+    });
+  }
 
-    console.log('Added to Cart');
+  // Save the cart items to localStorage
+  localStorage.setItem('cart', JSON.stringify(cart));
 
-    // Show 'Added to Cart' text for 2 seconds
-    const addedToCartMessageElement = document.querySelector(`.js-added-to-cart-${productId}`);
-    addedToCartMessageElement.classList.add('added-to-cart-visible');
+  console.log('Added to Cart');
 
-    // Cancel the previous timeout, if one exists.
-    clearTimeout(timeoutId);
+  // Show 'Added to Cart' text for 2 seconds
+  const addedToCartMessageElement = document.querySelector(`.js-added-to-cart-${productId}`);
+  addedToCartMessageElement.classList.add('added-to-cart-visible');
 
-    // Start a new 2-second timeout.
-    timeoutId = setTimeout(() => {
-      addedToCartMessageElement.classList.remove('added-to-cart-visible');
-    }, 2000);
+  // Cancel the previous timeout, if one exists.
+  clearTimeout(timeoutId);
+
+  // Start a new 2-second timeout.
+  timeoutId = setTimeout(() => {
+    addedToCartMessageElement.classList.remove('added-to-cart-visible');
+  }, 2000);
 }
 
 export function removeFromCart(productId) {
@@ -59,7 +60,7 @@ export function removeFromCart(productId) {
   });
 
   cart = newCart;
-  
+
   // Save the updated cart to localStorage
   localStorage.setItem('cart', JSON.stringify(cart));
 }
@@ -70,6 +71,23 @@ export function updateQuantity(productId, quantity) {
       item.quantity = quantity;
     }
   });
+
+  // Save the updated cart to localStorage
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+export function updateDeliveryOption(productId, deliveryOptionId) {
+  let matchingItem;
+
+  // Loop through the cart to find the item
+  cart.forEach((item) => {
+    if (productId == item.productId) {
+      matchingItem = item;
+    }
+  });
+
+  // Update delivery option id for that item
+  matchingItem.deliveryOptionId = deliveryOptionId;
 
   // Save the updated cart to localStorage
   localStorage.setItem('cart', JSON.stringify(cart));
