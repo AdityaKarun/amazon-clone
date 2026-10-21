@@ -4,7 +4,7 @@ import { formatCurrency } from './utils/money.js';
 
 let productsHTML = '';
 
-function updateCartQuantity() {
+function updateCartQuantityOnPage() {
 
   let cartQuantity = 0;
 
@@ -89,6 +89,6 @@ document.querySelectorAll('.js-add-to-cart').forEach((button) => {
     addToCart(productId, quantity);
 
     // Update cart quantity on the page
-    updateCartQuantity();
+    updateCartQuantityOnPage();
   });
 });
