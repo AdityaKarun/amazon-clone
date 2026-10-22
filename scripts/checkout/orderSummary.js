@@ -1,4 +1,4 @@
-import { products, getProduct } from '../../data/products.js';
+import { getProduct } from '../../data/products.js';
 import { cart, getCartQuantity, removeFromCart, updateQuantity, updateDeliveryOption } from '../../data/cart.js';
 import { deliveryOptions, getDeliveryOption } from '../../data/deliveryOptions.js';
 import { renderPaymentSummary } from './paymentSummary.js';
