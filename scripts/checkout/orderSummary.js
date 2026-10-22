@@ -22,13 +22,13 @@ function deliveryOptionsHTML(productId, cartItem) {
         }
 
         deliveryOptionsHTML += `
-                    <div class="delivery-option js-delivery-option" data-product-id=${productId} data-delivery-option-id=${deliveryOption.id}>
+                    <label class="delivery-option js-delivery-option" data-product-id="${productId}" data-delivery-option-id="${deliveryOption.id}">
                         <input type="radio" ${isChecked ? 'checked' : ''} class="delivery-option-input" name="delivery-option-${productId}" />
                         <div>
                             <div class="delivery-option-date">${dateString}</div>
                             <div class="delivery-option-price">${priceString} Shipping</div>
                         </div>
-                    </div>
+                    </label>
                     `
     });
 
