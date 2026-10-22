@@ -1,6 +1,7 @@
 import { products, getProduct } from '../../data/products.js';
 import { cart, getCartQuantity, removeFromCart, updateQuantity, updateDeliveryOption } from '../../data/cart.js';
 import { deliveryOptions, getDeliveryOption } from '../../data/deliveryOptions.js';
+import { renderPaymentSummary } from './paymentSummary.js';
 import { formatCurrency } from '../utils/money.js';
 import { calculateDeliveryDate } from '../utils/deliveryDate.js';
 
@@ -108,6 +109,9 @@ function addEventListeners() {
             const productId = link.dataset.productId;
             removeFromCart(productId);
             deleteCartItemFromPage(productId);
+
+            // Re-render the payment summary to reflect the updated cart totals
+            renderPaymentSummary();
         });
     });
 
@@ -145,6 +149,9 @@ function addEventListeners() {
 
             updateQuantity(productId, newQuantity);
             updateCartItemOnPage(productId, newQuantity)
+
+            // Re-render the payment summary to reflect the updated cart totals
+            renderPaymentSummary();
         });
     });
 
@@ -175,6 +182,9 @@ function addEventListeners() {
             );
 
             container.querySelector('.delivery-date').innerHTML = dateString;
+
+            // Re-render the payment summary to reflect the updated cart totals
+            renderPaymentSummary();
         });
     });
 }
