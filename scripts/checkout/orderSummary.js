@@ -1,6 +1,6 @@
-import { products } from '../../data/products.js';
+import { products, getProduct } from '../../data/products.js';
 import { cart, getCartQuantity, removeFromCart, updateQuantity, updateDeliveryOption } from '../../data/cart.js';
-import { deliveryOptions } from '../../data/deliveryOptions.js';
+import { deliveryOptions, getDeliveryOption } from '../../data/deliveryOptions.js';
 import { formatCurrency } from '../utils/money.js';
 import { calculateDeliveryDate } from '../utils/deliveryDate.js';
 
@@ -39,25 +39,13 @@ function cartItemHTML() {
 
     cart.forEach((cartItem) => {
         const productId = cartItem.productId;
-
-        let matchingProduct;
-
-        products.forEach((product) => {
-            if (productId === product.id) {
-                matchingProduct = product;
-            }
-        });
-
         const deliveryOptionId = cartItem.deliveryOptionId;
 
-        let deliveryOption;
+        // Get product and delivery details
+        const matchingProduct = getProduct(productId);
+        const deliveryOption = getDeliveryOption(deliveryOptionId);
 
-        deliveryOptions.forEach((option) => {
-            if (option.id === deliveryOptionId) {
-                deliveryOption = option;
-            }
-        });
-
+        // Calculate delivery date
         const dateString = calculateDeliveryDate(deliveryOption.deliveryDays);
 
         checkoutItemsHTML += `
