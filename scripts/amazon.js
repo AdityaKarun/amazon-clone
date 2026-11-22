@@ -1,25 +1,16 @@
-import { products } from '../data/products.js';
-import { cart, addToCart, getCartQuantity } from '../data/cart.js';
+import { loadProducts, products } from '../data/products.js';
+import { addToCart, getCartQuantity } from '../data/cart.js';
 import { formatCurrency } from './utils/money.js';
 
-let productsHTML = '';
-
 function updateCartQuantityOnPage() {
-
-  let cartQuantity = 0;
-
-  cart.forEach((item) => {
-    cartQuantity += item.quantity;
-  })
-
-  document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+  document.querySelector('.js-cart-quantity').innerHTML = getCartQuantity();
 }
 
-// Get cart quantity when page loads up
-document.querySelector('.js-cart-quantity').innerHTML = getCartQuantity();
+function loadProductsGrid() {
+  let productsHTML = '';
 
-products.forEach((product) => {
-  productsHTML += `
+  products.forEach((product) => {
+    productsHTML += `
     <div class="product-container">
           <div class="product-image-container">
             <img class="product-image"
@@ -69,26 +60,37 @@ products.forEach((product) => {
           </button>
         </div>
     `
-});
-
-document.querySelector('.js-products-grid').innerHTML = productsHTML;
-
-document.querySelectorAll('.js-add-to-cart').forEach((button) => {
-  button.addEventListener('click', () => {
-    const productId = button.dataset.productId;
-    
-    // Get selected quantity from the select element
-    const quantitySelector = document.querySelector(
-      `.js-quantity-selector-${productId}`
-    );
-
-    // Convert the quantity to a Number, since values read from DOM are strings by default
-    const quantity = Number(quantitySelector.value);
-
-    // Add item to cart using its productId and quantity
-    addToCart(productId, quantity);
-
-    // Update cart quantity on the page
-    updateCartQuantityOnPage();
   });
-});
+
+  document.querySelector('.js-products-grid').innerHTML = productsHTML;
+}
+
+function addEventListeners() {
+  // Event Listener: Add an item to the cart
+  document.querySelectorAll('.js-add-to-cart').forEach((button) => {
+    button.addEventListener('click', () => {
+      const productId = button.dataset.productId;
+
+      // Get selected quantity from the select element
+      const quantitySelector = document.querySelector(
+        `.js-quantity-selector-${productId}`
+      );
+
+      // Convert the quantity to a Number, since values read from DOM are strings by default
+      const quantity = Number(quantitySelector.value);
+
+      // Add item to cart using its productId and quantity
+      addToCart(productId, quantity);
+
+      // Update cart quantity on the page
+      updateCartQuantityOnPage();
+    });
+  });
+}
+
+function initializePage() {
+  updateCartQuantityOnPage();
+  loadProducts(loadProductsGrid, addEventListeners);
+}
+
+initializePage();
