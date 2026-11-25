@@ -1,3 +1,5 @@
+const orders = JSON.parse(localStorage.getItem('orders')) || [];
+
 export async function placeOrder(cart) {
     const response = await fetch(
         'https://supersimplebackend.dev/orders',
@@ -18,5 +20,14 @@ export async function placeOrder(cart) {
 
     const order = await response.json();
 
+    console.log('Order placed successfully.');
+
     return order;
+}
+
+export function addOrder(order) {
+    orders.unshift(order);
+
+    // Save the order to localStorage
+    localStorage.setItem('orders', JSON.stringify(orders));
 }
