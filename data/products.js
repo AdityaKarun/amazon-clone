@@ -1,20 +1,17 @@
 export let products = []
 
-export function loadProducts(function1, function2) {
-  const xhr = new XMLHttpRequest();
-
-  xhr.addEventListener('load', () => {
-    products = JSON.parse(xhr.response);
-
-    // Execute callback functions after products have loaded
-    function1();
-    function2();
-
-    console.log('Products loaded.');
-  });
-  xhr.open('GET', 'https://supersimplebackend.dev/products');
-  xhr.send();
+export async function loadProducts() {
   console.log('Loading products...');
+
+  const response = await fetch('https://supersimplebackend.dev/products');
+
+  if (!response.ok) {
+    throw Error('Failed to fetch products.')
+  }
+
+  products = await response.json();
+
+  console.log('Products loaded.');
 }
 
 export function getProduct(productId) {

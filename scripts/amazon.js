@@ -88,9 +88,17 @@ function addEventListeners() {
   });
 }
 
-function initializePage() {
+async function initializePage() {
   updateCartQuantityOnPage();
-  loadProducts(loadProductsGrid, addEventListeners);
+
+  try {
+    await loadProducts();
+
+    loadProductsGrid();
+    addEventListeners();
+  } catch (error) {
+    console.error('Failed to initialize page:', error);
+  }
 }
 
 initializePage();
