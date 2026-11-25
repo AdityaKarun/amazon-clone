@@ -1,10 +1,11 @@
 import { cart, getCartQuantity } from '../../data/cart.js';
 import { getProduct } from '../../data/products.js';
 import { getDeliveryOption } from '../../data/deliveryOptions.js';
+import { placeOrder, addOrder } from '../../data/orders.js';
 import { formatCurrency } from '../utils/money.js';
 
 function paymentSummaryHTML(summary) {
-    const paymentSummaryHTML = `
+  const paymentSummaryHTML = `
           <div class="payment-summary-title">
             Order Summary
           </div>
@@ -34,42 +35,70 @@ function paymentSummaryHTML(summary) {
             <div class="payment-summary-money">$${formatCurrency(summary.orderTotalCents)}</div>
           </div>
 
-          <button class="place-order-button button-primary">
+          <button class="place-order-button button-primary js-place-order">
             Place your order
           </button>
     `
 
-    return paymentSummaryHTML;
+  return paymentSummaryHTML;
 }
 
 function calculatePaymentSummary() {
-    let productPriceCents = 0;
-    let shippingPriceCents = 0;
+  let productPriceCents = 0;
+  let shippingPriceCents = 0;
 
-    cart.forEach((item) => {
-        const product = getProduct(item.productId);
-        const deliveryOption = getDeliveryOption(item.deliveryOptionId);
+  cart.forEach((item) => {
+    const product = getProduct(item.productId);
+    const deliveryOption = getDeliveryOption(item.deliveryOptionId);
 
-        productPriceCents += product.priceCents * item.quantity;
-        shippingPriceCents += deliveryOption.priceCents;
-    });
+    productPriceCents += product.priceCents * item.quantity;
+    shippingPriceCents += deliveryOption.priceCents;
+  });
 
-    const totalBeforeTax = productPriceCents + shippingPriceCents;
-    const taxCents = totalBeforeTax * 0.1;
-    const orderTotalCents = totalBeforeTax + taxCents;
+  const totalBeforeTax = productPriceCents + shippingPriceCents;
+  const taxCents = totalBeforeTax * 0.1;
+  const orderTotalCents = totalBeforeTax + taxCents;
 
-    return {
-        productPriceCents,
-        shippingPriceCents,
-        totalBeforeTax,
-        taxCents,
-        orderTotalCents
-    };
+  return {
+    productPriceCents,
+    shippingPriceCents,
+    totalBeforeTax,
+    taxCents,
+    orderTotalCents
+  };
+}
+
+async function handlePlaceOrder() {
+  const button = document.querySelector('.js-place-order');
+
+  button.disabled = true;
+
+  try {
+    const order = await placeOrder(cart);
+    console.log(order);
+
+    addOrder(order);
+
+    window.location.href = 'orders.html';
+  } catch (error) {
+    console.error('Error placing order:', error);
+
+    alert('Unable to place your order. Please try again.');
+
+    button.disabled = false;
+  }
 }
 
 export function renderPaymentSummary() {
-    const paymentSummary = calculatePaymentSummary();
-    const html = paymentSummaryHTML(paymentSummary);
+  const paymentSummary = calculatePaymentSummary();
+  const html = paymentSummaryHTML(paymentSummary);
 
-    document.querySelector('.js-payment-summary').innerHTML = html;
+  document.querySelector('.js-payment-summary').innerHTML = html;
+  addEventListeners();
+}
+
+function addEventListeners() {
+  // Event Listener: Place order for cart items
+  document.querySelector('.js-place-order')
+    .addEventListener('click', handlePlaceOrder)
 }
