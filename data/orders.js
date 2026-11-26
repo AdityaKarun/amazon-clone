@@ -1,4 +1,4 @@
-const orders = JSON.parse(localStorage.getItem('orders')) || [];
+export const orders = JSON.parse(localStorage.getItem('orders')) || [];
 
 export async function placeOrder(cart) {
     const response = await fetch(
