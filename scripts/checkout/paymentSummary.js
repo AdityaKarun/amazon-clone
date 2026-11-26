@@ -1,4 +1,4 @@
-import { cart, getCartQuantity } from '../../data/cart.js';
+import { cart, getCartQuantity, resetCart } from '../../data/cart.js';
 import { getProduct } from '../../data/products.js';
 import { getDeliveryOption } from '../../data/deliveryOptions.js';
 import { placeOrder, addOrder } from '../../data/orders.js';
@@ -75,10 +75,11 @@ async function handlePlaceOrder() {
 
   try {
     const order = await placeOrder(cart);
-    console.log(order);
 
     addOrder(order);
 
+    resetCart();
+    
     window.location.href = 'orders.html';
   } catch (error) {
     console.error('Error placing order:', error);

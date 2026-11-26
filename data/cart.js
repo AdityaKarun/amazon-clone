@@ -92,3 +92,10 @@ export function updateDeliveryOption(productId, deliveryOptionId) {
   // Save the updated cart to localStorage
   localStorage.setItem('cart', JSON.stringify(cart));
 }
+
+export function resetCart() {
+  cart = []
+  
+  // Save the empty cart to localStorage
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
