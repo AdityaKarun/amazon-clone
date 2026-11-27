@@ -1,5 +1,5 @@
 import { loadProducts, getProduct } from '../data/products.js';
-import { getCartQuantity } from '../data/cart.js';
+import { addToCart, getCartQuantity } from '../data/cart.js';
 import { orders } from '../data/orders.js';
 
 import { formatCurrency } from './utils/money.js';
@@ -29,7 +29,8 @@ function loadProductsListHTML(order) {
           <div class="product-quantity">
             Quantity: ${productDetails.quantity}
           </div>
-          <button class="buy-again-button button-primary">
+          <button class="buy-again-button button-primary js-buy-again"
+            data-product-id="${product.id}">
             <img class="buy-again-icon" src="images/icons/buy-again.png">
             <span class="buy-again-message">Buy it again</span>
           </button>
@@ -47,7 +48,7 @@ function loadProductsListHTML(order) {
     return productsListHTML;
 }
 
-function loadOrdersGrid() {
+function loadOrdersGridHTML() {
     let ordersHTML = '';
 
     orders.forEach((order) => {
@@ -84,13 +85,31 @@ function loadOrdersGrid() {
     document.querySelector('.js-order-grid').innerHTML = ordersHTML;
 }
 
+function addEventListeners() {
+    // Event Listener: Add an already purchased item to the cart
+    document.querySelectorAll('.js-buy-again').forEach((button) => {
+    button.addEventListener('click', () => {
+      addToCart(button.dataset.productId, 1);
+      button.innerHTML = 'Added';
+      setTimeout(() => {
+        button.innerHTML = `
+          <img class="buy-again-icon" src="images/icons/buy-again.png">
+          <span class="buy-again-message">Buy it again</span>
+        `;
+      }, 1000);
+      updateCartQuantityOnPage();
+    });
+  });
+}
+
 async function initializePage() {
     updateCartQuantityOnPage();
 
     try {
         await loadProducts();
 
-        loadOrdersGrid();
+        loadOrdersGridHTML();
+        addEventListeners();
     } catch (error) {
         console.error('Failed to initialize orders page:', error);
     }
