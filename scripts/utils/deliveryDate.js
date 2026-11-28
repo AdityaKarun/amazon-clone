@@ -7,3 +7,7 @@ export function calculateDeliveryDate(deliveryDays) {
 export function formatDeliveryDate(date) {
   return dayjs(date).format('MMMM D');
 }
+
+export function formatDeliveryDateWithDay(date) {
+  return dayjs(date).format('dddd, MMMM D')
+}
