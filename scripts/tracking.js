@@ -1,7 +1,7 @@
 import { getCartQuantity } from "../data/cart.js";
 import { loadProducts, getProduct } from "../data/products.js";
 import { getOrder } from "../data/orders.js";
-import { formatDeliveryDateWithDay } from "./utils/deliveryDate.js";
+import { formatDeliveryDateWithDay, calculateDeliveryProgressPercentage } from "./utils/deliveryDate.js";
 
 function updateCartQuantityOnPage() {
     document.querySelector('.js-cart-quantity').innerHTML = getCartQuantity();
@@ -19,7 +19,7 @@ function getProductDetail(order, product) {
     return productDetails;
 }
 
-function loadTrackingHTML(product, productDetails) {
+function loadTrackingHTML(product, productDetails, percentProgress) {
     const trackingHTML = `
     <a class="back-to-orders-link link-primary" href="orders.html">
       View all orders
@@ -35,18 +35,18 @@ function loadTrackingHTML(product, productDetails) {
     </div>
     <img class="product-image" src="${product.image}">
     <div class="progress-labels-container">
-      <div class="progress-label">
+      <div class="progress-label ${percentProgress < 50 ? 'current-status' : ''}">
         Preparing
       </div>
-      <div class="progress-label current-status">
+      <div class="progress-label ${(percentProgress >= 50 && percentProgress < 100) ? 'current-status' : ''}">
         Shipped
       </div>
-      <div class="progress-label">
+      <div class="progress-label ${percentProgress >= 100 ? "current-status" : ''}">
         Delivered
       </div>
     </div>
     <div class="progress-bar-container">
-      <div class="progress-bar"></div>
+      <div class="progress-bar" style="width: ${percentProgress}%;"></div>
     </div>
   `;
 
@@ -65,10 +65,10 @@ async function initializePage() {
 
         const order = getOrder(orderId);
         const product = getProduct(productId);
+        const productDetails = getProductDetail(order, product);
+        const percentProgress = calculateDeliveryProgressPercentage(order, productDetails);
 
-        const productDetails = getProductDetail(order, product)
-
-        loadTrackingHTML(product, productDetails);
+        loadTrackingHTML(product, productDetails, percentProgress);
     } catch (error) {
         console.error('Failed to initialize tracking page:', error);
     }

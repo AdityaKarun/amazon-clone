@@ -11,3 +11,11 @@ export function formatDeliveryDate(date) {
 export function formatDeliveryDateWithDay(date) {
   return dayjs(date).format('dddd, MMMM D')
 }
+
+export function calculateDeliveryProgressPercentage(order, productDetails) {
+  const today = dayjs();
+  const orderTime = dayjs(order.orderTime);
+  const deliveryTime = dayjs(productDetails.estimatedDeliveryTime);
+
+  return ((today - orderTime) / (deliveryTime - orderTime)) * 100;
+}
