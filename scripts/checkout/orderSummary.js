@@ -3,7 +3,7 @@ import { cart, getCartQuantity, removeFromCart, updateQuantity, updateDeliveryOp
 import { deliveryOptions, getDeliveryOption } from '../../data/deliveryOptions.js';
 import { renderPaymentSummary } from './paymentSummary.js';
 import { formatCurrency } from '../utils/money.js';
-import { calculateDeliveryDate } from '../utils/deliveryDate.js';
+import { calculateDeliveryDate } from '../utils/delivery.js';
 
 function deliveryOptionsHTML(productId, cartItem) {
     let deliveryOptionsHTML = '';

@@ -1,31 +1,31 @@
 import { getCartQuantity } from "../data/cart.js";
 import { loadProducts, getProduct } from "../data/products.js";
 import { getOrder } from "../data/orders.js";
-import { formatDeliveryDateWithDay, calculateDeliveryProgressPercentage } from "./utils/deliveryDate.js";
+import { formatDeliveryDateWithDay, calculateDeliveryProgressPercentage, getDeliveryMessage } from "./utils/delivery.js";
 
 function updateCartQuantityOnPage() {
-    document.querySelector('.js-cart-quantity').innerHTML = getCartQuantity();
+  document.querySelector('.js-cart-quantity').innerHTML = getCartQuantity();
 }
 
 function getProductDetail(order, product) {
-    let productDetails;
+  let productDetails;
 
-    order.products.forEach((details) => {
-        if (details.productId === product.id) {
-            productDetails = details;
-        }
-    });
+  order.products.forEach((details) => {
+    if (details.productId === product.id) {
+      productDetails = details;
+    }
+  });
 
-    return productDetails;
+  return productDetails;
 }
 
-function loadTrackingHTML(product, productDetails, percentProgress) {
-    const trackingHTML = `
+function loadTrackingHTML(product, productDetails, percentProgress, deliveryMessage) {
+  const trackingHTML = `
     <a class="back-to-orders-link link-primary" href="orders.html">
       View all orders
     </a>
     <div class="delivery-date">
-      Arriving on ${formatDeliveryDateWithDay(productDetails.estimatedDeliveryTime)}
+      ${deliveryMessage} ${formatDeliveryDateWithDay(productDetails.estimatedDeliveryTime)}
     </div>
     <div class="product-info">
       ${product.name}
@@ -50,28 +50,29 @@ function loadTrackingHTML(product, productDetails, percentProgress) {
     </div>
   `;
 
-    document.querySelector('.js-order-tracking').innerHTML = trackingHTML;
+  document.querySelector('.js-order-tracking').innerHTML = trackingHTML;
 }
 
 async function initializePage() {
-    updateCartQuantityOnPage();
+  updateCartQuantityOnPage();
 
-    const url = new URL(window.location.href);
-    const orderId = (url.searchParams.get('orderId'));
-    const productId = (url.searchParams.get('productId'));
+  const url = new URL(window.location.href);
+  const orderId = (url.searchParams.get('orderId'));
+  const productId = (url.searchParams.get('productId'));
 
-    try {
-        await loadProducts();
+  try {
+    await loadProducts();
 
-        const order = getOrder(orderId);
-        const product = getProduct(productId);
-        const productDetails = getProductDetail(order, product);
-        const percentProgress = calculateDeliveryProgressPercentage(order, productDetails);
+    const order = getOrder(orderId);
+    const product = getProduct(productId);
+    const productDetails = getProductDetail(order, product);
+    const percentProgress = calculateDeliveryProgressPercentage(order, productDetails);
+    const deliveryMessage = getDeliveryMessage(productDetails);
 
-        loadTrackingHTML(product, productDetails, percentProgress);
-    } catch (error) {
-        console.error('Failed to initialize tracking page:', error);
-    }
+    loadTrackingHTML(product, productDetails, percentProgress, deliveryMessage);
+  } catch (error) {
+    console.error('Failed to initialize tracking page:', error);
+  }
 }
 
 initializePage();

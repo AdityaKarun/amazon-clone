@@ -19,3 +19,15 @@ export function calculateDeliveryProgressPercentage(order, productDetails) {
 
   return ((today - orderTime) / (deliveryTime - orderTime)) * 100;
 }
+
+export function getDeliveryMessage(productDetails) {
+  const today = dayjs();
+  const deliveryTime = dayjs(productDetails.estimatedDeliveryTime);
+
+  if (today < deliveryTime) {
+    return "Arriving on";
+  }
+  else {
+    return "Delivered on";
+  }
+}
