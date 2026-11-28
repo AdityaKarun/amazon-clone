@@ -6,10 +6,18 @@ function updateCartQuantityOnPage() {
   document.querySelector('.js-cart-quantity').innerHTML = getCartQuantity();
 }
 
-function loadProductsGrid() {
+function loadProductsGrid(search) {
   let productsHTML = '';
+  let filteredProducts = products;
 
-  products.forEach((product) => {
+  // If a search exists in the URL parameters, filter the products that match the search.
+  if (search) {
+    filteredProducts = products.filter((product) => {
+      return product.name.includes(search);
+    });
+  }
+
+  filteredProducts.forEach((product) => {
     productsHTML += `
     <div class="product-container">
           <div class="product-image-container">
@@ -86,15 +94,34 @@ function addEventListeners() {
       updateCartQuantityOnPage();
     });
   });
+
+  // Event Listener: Appened search to query parameter
+  document.querySelector('.js-search-button')
+    .addEventListener('click', () => {
+      const search = document.querySelector('.js-search-bar').value;
+      window.location.href = `amazon.html?search=${search}`;
+    });
+
+  // Event Listener: Accept "Enter" from keyboard to initiate search
+  document.querySelector('.js-search-bar')
+    .addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        const searchTerm = document.querySelector('.js-search-bar').value;
+        window.location.href = `amazon.html?search=${searchTerm}`;
+      }
+    });
 }
 
 async function initializePage() {
   updateCartQuantityOnPage();
 
+  const url = new URL(window.location.href);
+  const search = url.searchParams.get('search');
+
   try {
     await loadProducts();
 
-    loadProductsGrid();
+    loadProductsGrid(search);
     addEventListeners();
   } catch (error) {
     console.error('Failed to initialize page:', error);
